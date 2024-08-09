@@ -494,6 +494,7 @@ template ValidateCoordinateInclusion(depth, n, grid_bits) {
 component main = ValidateCoordinateInclusion(16, 4, 32);
 
 // Beijing: 129908893, 296324597
+// Costa Rica, Escazu, Krispy Kreme (Near but Outside Polygon): 99931080, 95851137
 // Costa Rica, Escazu, Krispy Kreme: 99930794, 95850986
 
 /* INPUT = {
