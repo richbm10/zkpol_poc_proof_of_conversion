@@ -429,6 +429,10 @@ template VerifyMerkleProof(depth) {
 
     // Introduce the difference signal
     signal diff;
+
+    signal output flag2;
+
+    flag2 <== currentHash[depth];
     diff <== currentHash[depth] - root;
 
     // Enforce that diff is zero if and only if currentHash[depth] equals root
@@ -448,6 +452,7 @@ template ValidateCoordinateInclusion(depth, n, grid_bits) {
     signal output isValid;            // The output signal indicating if the point is valid
 
     signal output flag1;
+    signal output flag2;
 
     // Use RayTracing to check if the point is inside the polygon
     component rayTracing = RayTracing(n, grid_bits);
@@ -457,8 +462,6 @@ template ValidateCoordinateInclusion(depth, n, grid_bits) {
         rayTracing.polygon[i][0] <== polygon[i][0];
         rayTracing.polygon[i][1] <== polygon[i][1];
     }
-
-    flag1 <== rayTracing.out;
 
     // Hash the polygon
     component hashPolygon = HashPolygon(n);
@@ -475,6 +478,9 @@ template ValidateCoordinateInclusion(depth, n, grid_bits) {
         verifyMerkleProof.pathIndices[i] <== pathIndices[i];
         verifyMerkleProof.pathElements[i] <== pathElements[i];
     }
+
+    flag1 <== verifyMerkleProof.isValid; //❌
+    flag2 <== verifyMerkleProof.flag2;
 
     // Introduce an intermediate signal for the equality check
     signal polygonHashDiff;
@@ -497,22 +503,22 @@ template ValidateCoordinateInclusion(depth, n, grid_bits) {
 component main = ValidateCoordinateInclusion(16, 4, 32);
 
 /* INPUT = {
-  "px": "2",
-  "py": "3",
-  "polygonHash": "3075630351139026323880740587992581306153260220725689434708133927192654469822",
+  "px": "99930794",
+  "py": "95850986",
+  "polygonHash": "19734256724370939262826947009735877839971681289001157384192434648867876200933",
   "polygon": [
-    ["9930607", "-84149114"],
-    ["9930856", "-84148938"],
-    ["9930840", "-84149147"],
-    ["9930610", "-84148928"]
+    ["99930607", "95850886"],
+    ["99930856", "95851062"],
+    ["99930840", "95850853"],
+    ["99930610", "95851072"]
   ],
-  "root": "77709350764185855408287693549593239255085467490111679351481920235283336820880",
+  "root": "2703440162454052840609636720528243608663031709412357648362337729401815863073",
   "pathIndices": [
     "0", "1", "0", "1", "0", "1", "0", "1",
     "0", "1", "0", "1", "0", "1", "0", "1"
   ],
   "pathElements": [
-    "3075630351139026323880740587992581306153260220725689434708133927192654469822",
+    "19734256724370939262826947009735877839971681289001157384192434648867876200933",
     "2222222222222222222222222222222222222222222222222222222222222222",
     "3333333333333333333333333333333333333333333333333333333333333333",
     "4444444444444444444444444444444444444444444444444444444444444444",
