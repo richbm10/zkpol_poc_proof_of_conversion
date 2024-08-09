@@ -430,9 +430,6 @@ template VerifyMerkleProof(depth) {
     // Introduce the difference signal
     signal diff;
 
-    signal output flag2;
-
-    flag2 <== currentHash[depth];
     diff <== currentHash[depth] - root;
 
     // Enforce that diff is zero if and only if currentHash[depth] equals root
@@ -450,9 +447,6 @@ template ValidateCoordinateInclusion(depth, n, grid_bits) {
     signal input pathIndices[depth];  // The Merkle proof path indices
     signal input pathElements[depth]; // The Merkle proof path elements
     signal output isValid;            // The output signal indicating if the point is valid
-
-    signal output flag1;
-    signal output flag2;
 
     // Use RayTracing to check if the point is inside the polygon
     component rayTracing = RayTracing(n, grid_bits);
@@ -479,9 +473,6 @@ template ValidateCoordinateInclusion(depth, n, grid_bits) {
         verifyMerkleProof.pathElements[i] <== pathElements[i];
     }
 
-    flag1 <== verifyMerkleProof.isValid; //❌
-    flag2 <== verifyMerkleProof.flag2;
-
     // Introduce an intermediate signal for the equality check
     signal polygonHashDiff;
     polygonHashDiff <== hashPolygon.polygonHash - polygonHash;
@@ -501,6 +492,9 @@ template ValidateCoordinateInclusion(depth, n, grid_bits) {
 }
 
 component main = ValidateCoordinateInclusion(16, 4, 32);
+
+// Beijing: 129908893, 296324597
+// Costa Rica, Escazu, Krispy Kreme: 99930794, 95850986
 
 /* INPUT = {
   "px": "99930794",
